@@ -1,0 +1,8 @@
+.venv/
+__pycache__/
+*/Model/*.pkl
+.DS_Store
+.idea/
+log_file.txt
+cache/
+tmp_dwl
