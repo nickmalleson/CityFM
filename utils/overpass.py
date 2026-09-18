@@ -17,8 +17,11 @@ def overpass_dl(city, type):
     overpass_url = "http://overpass-api.de/api/interpreter"
     overpass_query = ' [out:json]; area[name="' + str(city) + '"]; (' + str(type) + '(area); ); out; '
 
+    # overpass-api.de returns 406 for the default python-requests User-Agent
+    headers = {'Connection': 'close', 'User-Agent': 'CityFM/1.0 (https://github.com/PasqualeTurin/CityFM)'}
+
     in_place_print('Downloading ' + str(type) + 's for ' + str(city) + '...')
-    response = requests.get(overpass_url, params={'data': overpass_query}, stream=True, headers={'Connection':'close'})
+    response = requests.get(overpass_url, params={'data': overpass_query}, stream=True, headers=headers)
     
     while response.status_code != 200:
     
@@ -29,8 +32,9 @@ def overpass_dl(city, type):
             exit()
         
         print('Trying to recontact the server...')
+        time.sleep(10)
         
-        response = requests.get(overpass_url, params={'data': overpass_query})
+        response = requests.get(overpass_url, params={'data': overpass_query}, stream=True, headers=headers)
 
     with open('tmp_dwl', 'wb') as f:
     
