@@ -15,7 +15,15 @@ import config
 def overpass_dl(city, type):
 
     overpass_url = "http://overpass-api.de/api/interpreter"
-    overpass_query = ' [out:json]; area[name="' + str(city) + '"]; (' + str(type) + '(area); ); out; '
+
+    # city can be a place name or an OSM relation id (digits); the latter avoids
+    # name clashes (e.g. ten different areas are called "Leeds")
+    if str(city).isdigit():
+        area_sel = 'area(' + str(3600000000 + int(city)) + ')'
+    else:
+        area_sel = 'area[name="' + str(city) + '"]'
+
+    overpass_query = ' [out:json]; ' + area_sel + '; (' + str(type) + '(area); ); out; '
 
     # overpass-api.de returns 406 for the default python-requests User-Agent
     headers = {'Connection': 'close', 'User-Agent': 'CityFM/1.0 (https://github.com/PasqualeTurin/CityFM)'}

@@ -4,10 +4,11 @@ from utils.pre_processing import *
 
 
 parser = argparse.ArgumentParser(description='OSM2Vec')
-parser.add_argument("-c", type=str, default='Singapore', help='City')
+parser.add_argument("-c", type=str, default='Singapore', help='City (used as folder name)')
+parser.add_argument("-r", type=int, default=None, help='OSM relation id of the city boundary (optional; avoids name clashes)')
 
 hp = parser.parse_args()
-dwl_city = map_city(hp.c)
+dwl_city = str(hp.r) if hp.r else map_city(hp.c)
 
 if not os.path.isdir(hp.c):
     os.mkdir(hp.c)
@@ -40,7 +41,7 @@ if not os.path.isdir(hp.c+'/Ways'):
     
     os.mkdir(hp.c+'/Ways')
     
-    dl_driving_network(hp.c)
+    dl_driving_network(hp.c, osm_relation=hp.r)
     polygons = way_to_polygon(hp.c, polygons)
     polylines = way_to_polyline(hp.c, polylines)
     

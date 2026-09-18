@@ -372,10 +372,14 @@ def read_nodes(city, tagged=True):
     return nodes
 
 
-def dl_driving_network(city):
+def dl_driving_network(city, osm_relation=None):
 
     print('Saving driving network graph...')
-    G = ox.graph_from_place(city, network_type='drive', simplify=True)
+    if osm_relation:
+        boundary = ox.geocode_to_gdf('R' + str(osm_relation), by_osmid=True)
+        G = ox.graph_from_polygon(boundary.geometry.iloc[0], network_type='drive', simplify=True)
+    else:
+        G = ox.graph_from_place(city, network_type='drive', simplify=True)
     ox.io.save_graphml(G, filepath=str(city) + '/Ways/road_network.graphml', encoding='utf-8')
 
     G = nx.read_graphml(str(city) + '/Ways/road_network.graphml')
