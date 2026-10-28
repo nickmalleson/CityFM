@@ -10,7 +10,7 @@ from utils.training import Tokenizer, serialize_data
 def encode_nodes(city, nodes):
     
     with open(city+'/Model/model.pkl', 'rb') as f:
-        model = pickle.load(f)
+        model = match_raster(pickle.load(f))
         
     tok = Tokenizer(model.lm_name)
     
@@ -37,7 +37,7 @@ def encode_nodes(city, nodes):
 def encode_polygons(city, polygons):
 
     with open(city+'/Model/model.pkl', 'rb') as f:
-        model = pickle.load(f)
+        model = match_raster(pickle.load(f))
         
     tok = Tokenizer(model.lm_name)
     

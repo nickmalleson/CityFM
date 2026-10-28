@@ -87,7 +87,7 @@ def serialize_data(data, tok, add_zero=False):
     for d in data:
 
         tags = d['tags']
-        rq_tags = {k: tags[k] for k in osm_strings.use_tags if k in tags}
+        rq_tags = {k: tags[k] for k in osm_strings.use_tags if k in tags and (config.names_in_text or k != 'name')}
         s_tags = json_string(rq_tags)
         entities_tags.append(s_tags)
 
@@ -251,17 +251,33 @@ def make_relation_voc(relations):
     return way_voc
 
 
-def u_sampling(cd, poly_queries, idx):
+def print_epoch_end(t0, steps, lr):
+
+    secs = time.time() - t0
+    print('Epoch took ' + str(round(secs)) + ' s (' + str(round(secs / max(1, steps), 1)) + ' s per step), '
+          'learning rate now ' + '{:.2e}'.format(lr))
+
+
+def stage2_entity(entity):
+
+    # without its name, a footprint is matched to a building type rather than to one particular building
+    if (config.stage2_names and config.names_in_text) or 'name' not in entity['tags']:
+        return entity
+
+    return {**entity, 'tags': {k: v for k, v in entity['tags'].items() if k != 'name'}}
+
+
+def u_sampling(cd, poly_queries, idx, texts=None):
 
     random.shuffle(poly_queries)
-    used_c = []
+    used_c = set()
     queries = []
 
     for p_q in poly_queries:
 
-        tags = string_of_tags(cd.entities[p_q])
+        tags = texts[p_q] if texts else string_of_tags(cd.entities[p_q])
         if tags not in used_c:
-            used_c.append(tags)
+            used_c.add(tags)
             queries.append(p_q)
 
             if len(queries) == idx:
@@ -286,7 +302,8 @@ def train_SS_im(cd, model):
     tok = Tokenizer(config.lm)
     opt = optim.Adam(params=model.parameters(), lr=config.lr)
     bs = config.bs
-    num_steps = (len(queries) // bs)//5 # * epochs
+    # decay over the steps actually taken (previously the rate reached zero partway through training)
+    num_steps = int(min(len(queries), config.m_index) // bs) * config.n_epochs
     scheduler = get_linear_schedule_with_warmup(opt, num_warmup_steps=0, num_training_steps=num_steps)
 
     step_loss = []
@@ -299,6 +316,7 @@ def train_SS_im(cd, model):
         print_epoch(epoch+1, config.n_epochs)
 
         step = 0
+        t0 = time.time()
 
         # noinspection PyTypeChecker
         random.shuffle(queries)
@@ -353,6 +371,7 @@ def train_SS_im(cd, model):
                 break
 
         write_step(cd.city, step_loss)
+        print_epoch_end(t0, step, opt.param_groups[0]['lr'])
         save_model(cd.city, model, epoch+1, 'im')
 
     print('\n\n')
@@ -365,6 +384,10 @@ def train_SS_raster(cd, model):
     print('(Polygon)')
 
     poly_queries = filter_polygons(cd)
+    # the quiz text of every polygon, worked out once (u_sampling keeps these distinct within a quiz)
+    texts = {q: string_of_tags(stage2_entity(cd.entities[q])) for q in poly_queries}
+    print('Tag text ' + ('with' if config.stage2_names and config.names_in_text else 'without') + ' names: ' +
+          str(len(set(texts.values()))) + ' distinct texts for ' + str(len(poly_queries)) + ' polygons')
     opt = optim.Adam(params=model.parameters(), lr=config.lr * 10)
     tok = Tokenizer(config.lm)
     bs = config.bs_raster
@@ -379,6 +402,7 @@ def train_SS_raster(cd, model):
         print_epoch(epoch+1, config.n_epochs)
 
         step = 0
+        t0 = time.time()
 
         # noinspection PyTypeChecker
         # random.shuffle(poly_queries)
@@ -394,7 +418,7 @@ def train_SS_raster(cd, model):
 
             else:
                 # query = poly_queries[idx:idx + config.index_raster]
-                query = u_sampling(cd, poly_queries, config.index_raster)
+                query = u_sampling(cd, poly_queries, config.index_raster, texts)
 
             tags = []
             rasters = []
@@ -402,7 +426,7 @@ def train_SS_raster(cd, model):
 
             for q in query:
                 entity = cd.entities[q]
-                tags.append(entity)
+                tags.append(stage2_entity(entity))
                 rasters.append(poly_to_raster(Polygon(entity['points'])))
                 surfaces.append(norm_surface(entity['area']))
 
@@ -424,6 +448,7 @@ def train_SS_raster(cd, model):
                 break
 
         write_step(cd.city, step_loss)
+        print_epoch_end(t0, step, opt.param_groups[0]['lr'])
         save_model(cd.city, model, epoch + 1, 'raster')
 
     print('\n\n')
@@ -440,7 +465,7 @@ def train_SS_rel(cd, model):
     tok = Tokenizer(config.lm)
     opt = optim.Adam(params=model.parameters(), lr=config.lr/10)
     bs = config.bs_rel
-    num_steps = (len(queries) // bs) // 5  # * epochs
+    num_steps = (len(queries) // bs) * config.n_epochs
     scheduler = get_linear_schedule_with_warmup(opt, num_warmup_steps=0, num_training_steps=num_steps)
 
     way_voc = make_relation_voc(cd.relations)
@@ -453,6 +478,7 @@ def train_SS_rel(cd, model):
         print_epoch(epoch + 1, config.n_epochs)
 
         step = 0
+        t0 = time.time()
 
         # noinspection PyTypeChecker
         random.shuffle(queries)
@@ -521,6 +547,7 @@ def train_SS_rel(cd, model):
                 opt.zero_grad()
 
         write_step(cd.city, step_loss)
+        print_epoch_end(t0, step, opt.param_groups[0]['lr'])
         save_model(cd.city, model, epoch + 1, 'rel')
 
     print('\n\n')

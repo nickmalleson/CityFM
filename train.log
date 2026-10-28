@@ -1,0 +1,591 @@
+nohup: ignoring input
+The cache for model files in Transformers v4.22.0 has been updated. Migrating your old cache. This is a one-time only operation. You can interrupt this and resume the migration later on by calling `transformers.utils.move_cache()`.
+Moving 0 files to the new cache system
+0it [00:00, ?it/s]0it [00:00, ?it/s]
+Some weights of the model checkpoint at bert-base-uncased were not used when initializing BertModel: ['cls.predictions.transform.LayerNorm.bias', 'cls.predictions.transform.dense.weight', 'cls.predictions.decoder.weight', 'cls.seq_relationship.bias', 'cls.predictions.transform.dense.bias', 'cls.predictions.transform.LayerNorm.weight', 'cls.seq_relationship.weight', 'cls.predictions.bias']
+- This IS expected if you are initializing BertModel from the checkpoint of a model trained on another task or with another architecture (e.g. initializing a BertForSequenceClassification model from a BertForPreTraining model).
+- This IS NOT expected if you are initializing BertModel from the checkpoint of a model that you expect to be exactly identical (initializing a BertForSequenceClassification model from a BertForSequenceClassification model).
+Downloading: "https://github.com/pytorch/vision/zipball/v0.10.0" to /uolstore/home/users/geonsm/.cache/torch/hub/v0.10.0.zip
+--------------------------------------------------
+Self-supervised Training
+(Infomax)
+--------------------------------------------------
+Epoch (1/5)
+--------------------------------------------------
+Step 1 Loss: 18.9526
+Step 2 Loss: 18.169
+Step 3 Loss: 17.7458
+Step 4 Loss: 17.509
+Step 5 Loss: 17.2589
+Step 6 Loss: 16.9297
+Step 7 Loss: 16.8984
+Step 8 Loss: 16.9957
+Step 9 Loss: 17.1459
+Step 10 Loss: 17.1044
+Step 11 Loss: 17.1136
+Step 12 Loss: 17.1344
+Step 13 Loss: 17.1008
+Step 14 Loss: 16.8019
+Step 15 Loss: 16.8154
+Step 16 Loss: 16.6731
+Step 17 Loss: 16.8647
+Step 18 Loss: 16.4088
+Step 19 Loss: 16.6673
+Step 20 Loss: 17.0202
+Step 21 Loss: 16.331
+Step 22 Loss: 16.7565
+Step 23 Loss: 16.8412
+Step 24 Loss: 16.6373
+Step 25 Loss: 17.0959
+--------------------------------------------------
+Epoch (2/5)
+--------------------------------------------------
+Step 1 Loss: 16.3135
+Step 2 Loss: 16.9406
+Step 3 Loss: 16.8442
+Step 4 Loss: 16.4866
+Step 5 Loss: 16.6887
+Step 6 Loss: 16.6497
+Step 7 Loss: 16.9791
+Step 8 Loss: 16.6335
+Step 9 Loss: 17.4443
+Step 10 Loss: 16.3964
+Step 11 Loss: 16.5276
+Step 12 Loss: 16.5681
+Step 13 Loss: 16.5656
+Step 14 Loss: 16.6739
+Step 15 Loss: 16.798
+Step 16 Loss: 16.8345
+Step 17 Loss: 16.5061
+Step 18 Loss: 16.6714
+Step 19 Loss: 16.5975
+Step 20 Loss: 16.8912
+Step 21 Loss: 16.7472
+Step 22 Loss: 16.56
+Step 23 Loss: 16.6765
+Step 24 Loss: 16.3776
+Step 25 Loss: 16.5291
+--------------------------------------------------
+Epoch (3/5)
+--------------------------------------------------
+Step 1 Loss: 16.4864
+Step 2 Loss: 16.5474
+Step 3 Loss: 16.7885
+Step 4 Loss: 16.9706
+Step 5 Loss: 16.9312
+Step 6 Loss: 16.4389
+Step 7 Loss: 16.3753
+Step 8 Loss: 16.5898
+Step 9 Loss: 16.8156
+Step 10 Loss: 17.1102
+Step 11 Loss: 16.4183
+Step 12 Loss: 16.3009
+Step 13 Loss: 16.2347
+Step 14 Loss: 16.9351
+Step 15 Loss: 16.7324
+Step 16 Loss: 16.5512
+Step 17 Loss: 16.7042
+Step 18 Loss: 16.3533
+Step 19 Loss: 16.1333
+Step 20 Loss: 16.6991
+Step 21 Loss: 16.1741
+Step 22 Loss: 16.4765
+Step 23 Loss: 16.5251
+Step 24 Loss: 17.0061
+Step 25 Loss: 16.4144
+--------------------------------------------------
+Epoch (4/5)
+--------------------------------------------------
+Step 1 Loss: 16.2763
+Step 2 Loss: 17.1827
+Step 3 Loss: 16.9888
+Step 4 Loss: 16.3363
+Step 5 Loss: 16.4333
+Step 6 Loss: 16.5412
+Step 7 Loss: 16.6283
+Step 8 Loss: 16.9223
+Step 9 Loss: 16.6271
+Step 10 Loss: 16.8348
+Step 11 Loss: 16.7732
+Step 12 Loss: 16.4357
+Step 13 Loss: 16.8828
+Step 14 Loss: 16.5139
+Step 15 Loss: 16.6484
+Step 16 Loss: 16.6311
+Step 17 Loss: 16.4151
+Step 18 Loss: 16.923
+Step 19 Loss: 16.5803
+Step 20 Loss: 16.5071
+Step 21 Loss: 17.1026
+Step 22 Loss: 16.3767
+Step 23 Loss: 16.5257
+Step 24 Loss: 16.932
+Step 25 Loss: 16.6193
+--------------------------------------------------
+Epoch (5/5)
+--------------------------------------------------
+Step 1 Loss: 16.4721
+Step 2 Loss: 16.3722
+Step 3 Loss: 16.4647
+Step 4 Loss: 16.4221
+Step 5 Loss: 16.7169
+Step 6 Loss: 16.4748
+Step 7 Loss: 16.5751
+Step 8 Loss: 16.5366
+Step 9 Loss: 17.1467
+Step 10 Loss: 16.6752
+Step 11 Loss: 16.2721
+Step 12 Loss: 16.8215
+Step 13 Loss: 16.4515
+Step 14 Loss: 16.6249
+Step 15 Loss: 16.7307
+Step 16 Loss: 16.6816
+Step 17 Loss: 16.718
+Step 18 Loss: 16.6843
+Step 19 Loss: 16.3371
+Step 20 Loss: 16.6243
+Step 21 Loss: 16.9534
+Step 22 Loss: 16.6008
+Step 23 Loss: 16.9609
+Step 24 Loss: 16.6043
+Step 25 Loss: 16.81
+
+
+
+--------------------------------------------------
+Self-supervised Training
+(Polygon)
+--------------------------------------------------
+Epoch (1/5)
+--------------------------------------------------
+Step 1 Loss: 22.8274
+Step 2 Loss: 20.8929
+Step 3 Loss: 20.3698
+Step 4 Loss: 20.2257
+Step 5 Loss: 20.1343
+Step 6 Loss: 20.1325
+Step 7 Loss: 20.0857
+Step 8 Loss: 20.0876
+Step 9 Loss: 20.0159
+Step 10 Loss: 20.0197
+Step 11 Loss: 19.9379
+Step 12 Loss: 19.8812
+Step 13 Loss: 19.8473
+Step 14 Loss: 19.818
+Step 15 Loss: 19.7713
+Step 16 Loss: 19.6901
+Step 17 Loss: 19.7366
+Step 18 Loss: 19.7698
+Step 19 Loss: 19.6607
+Step 20 Loss: 19.761
+Step 21 Loss: 19.5453
+Step 22 Loss: 19.5852
+Step 23 Loss: 19.5926
+Step 24 Loss: 19.6984
+Step 25 Loss: 19.6184
+--------------------------------------------------
+Epoch (2/5)
+--------------------------------------------------
+Step 1 Loss: 19.5826
+Step 2 Loss: 19.4999
+Step 3 Loss: 19.6084
+Step 4 Loss: 19.4669
+Step 5 Loss: 19.5123
+Step 6 Loss: 19.4199
+Step 7 Loss: 19.3895
+Step 8 Loss: 19.4695
+Step 9 Loss: 19.5317
+Step 10 Loss: 19.306
+Step 11 Loss: 19.6227
+Step 12 Loss: 19.4604
+Step 13 Loss: 19.2647
+Step 14 Loss: 19.4889
+Step 15 Loss: 19.3034
+Step 16 Loss: 19.3722
+Step 17 Loss: 19.6331
+Step 18 Loss: 19.3521
+Step 19 Loss: 19.4267
+Step 20 Loss: 19.5248
+Step 21 Loss: 19.3975
+Step 22 Loss: 19.2423
+Step 23 Loss: 19.5336
+Step 24 Loss: 19.4289
+Step 25 Loss: 19.3374
+--------------------------------------------------
+Epoch (3/5)
+--------------------------------------------------
+Step 1 Loss: 19.451
+Step 2 Loss: 19.3658
+Step 3 Loss: 19.2414
+Step 4 Loss: 19.334
+Step 5 Loss: 19.1013
+Step 6 Loss: 19.3692
+Step 7 Loss: 19.1982
+Step 8 Loss: 19.1396
+Step 9 Loss: 19.2487
+Step 10 Loss: 19.3849
+Step 11 Loss: 19.3703
+Step 12 Loss: 19.5059
+Step 13 Loss: 19.2014
+Step 14 Loss: 19.0265
+Step 15 Loss: 19.1822
+Step 16 Loss: 19.3559
+Step 17 Loss: 19.1948
+Step 18 Loss: 19.2864
+Step 19 Loss: 19.2103
+Step 20 Loss: 19.1497
+Step 21 Loss: 19.2438
+Step 22 Loss: 19.0243
+Step 23 Loss: 19.1831
+Step 24 Loss: 19.134
+Step 25 Loss: 19.2349
+--------------------------------------------------
+Epoch (4/5)
+--------------------------------------------------
+Step 1 Loss: 19.2006
+Step 2 Loss: 19.2258
+Step 3 Loss: 19.2424
+Step 4 Loss: 19.151
+Step 5 Loss: 19.1755
+Step 6 Loss: 19.1431
+Step 7 Loss: 19.1822
+Step 8 Loss: 19.0656
+Step 9 Loss: 19.0205
+Step 10 Loss: 19.223
+Step 11 Loss: 19.0661
+Step 12 Loss: 18.8724
+Step 13 Loss: 19.017
+Step 14 Loss: 19.0194
+Step 15 Loss: 19.2075
+Step 16 Loss: 19.1695
+Step 17 Loss: 19.3094
+Step 18 Loss: 19.0503
+Step 19 Loss: 19.0668
+Step 20 Loss: 19.0768
+Step 21 Loss: 19.2179
+Step 22 Loss: 19.1136
+Step 23 Loss: 18.9406
+Step 24 Loss: 19.0601
+Step 25 Loss: 19.1748
+--------------------------------------------------
+Epoch (5/5)
+--------------------------------------------------
+Step 1 Loss: 19.0793
+Step 2 Loss: 19.0843
+Step 3 Loss: 19.0124
+Step 4 Loss: 19.0218
+Step 5 Loss: 19.0605
+Step 6 Loss: 19.22
+Step 7 Loss: 19.129
+Step 8 Loss: 18.8879
+Step 9 Loss: 18.9633
+Step 10 Loss: 19.0543
+Step 11 Loss: 19.0945
+Step 12 Loss: 18.9767
+Step 13 Loss: 18.9702
+Step 14 Loss: 19.0356
+Step 15 Loss: 18.8684
+Step 16 Loss: 19.1079
+Step 17 Loss: 19.1148
+Step 18 Loss: 18.8306
+Step 19 Loss: 18.8967
+Step 20 Loss: 19.0611
+Step 21 Loss: 18.9819
+Step 22 Loss: 18.9598
+Step 23 Loss: 18.972
+Step 24 Loss: 18.9192
+Step 25 Loss: 18.8635
+
+
+
+--------------------------------------------------
+Self-supervised Training
+(Relation Contrastive Learning)
+--------------------------------------------------
+Epoch (1/5)
+--------------------------------------------------
+Step 1 Loss: 3.3328
+Step 2 Loss: 3.1123
+Step 3 Loss: 3.4465
+Step 4 Loss: 2.5188
+Step 5 Loss: 3.4723
+Step 6 Loss: 3.6679
+Step 7 Loss: 3.5705
+Step 8 Loss: 3.0607
+Step 9 Loss: 3.029
+Step 10 Loss: 2.9674
+Step 11 Loss: 2.776
+Step 12 Loss: 3.0727
+Step 13 Loss: 3.2049
+Step 14 Loss: 3.4085
+Step 15 Loss: 3.175
+Step 16 Loss: 2.7055
+Step 17 Loss: 3.4175
+Step 18 Loss: 2.7125
+Step 19 Loss: 3.1745
+Step 20 Loss: 3.0175
+Step 21 Loss: 3.2814
+Step 22 Loss: 3.2684
+Step 23 Loss: 3.2327
+Step 24 Loss: 3.1691
+Step 25 Loss: 3.4476
+Step 26 Loss: 3.164
+Step 27 Loss: 3.2583
+Step 28 Loss: 3.3407
+Step 29 Loss: 3.1461
+Step 30 Loss: 3.3043
+Step 31 Loss: 3.0474
+Step 32 Loss: 3.0858
+Step 33 Loss: 3.3022
+Step 34 Loss: 3.2729
+Step 35 Loss: 2.9047
+Step 36 Loss: 3.283
+Step 37 Loss: 3.0409
+Step 38 Loss: 3.102
+Step 39 Loss: 3.1677
+Step 40 Loss: 3.3967
+Step 41 Loss: 3.1821
+Step 42 Loss: 2.9582
+Step 43 Loss: 2.8053
+Step 44 Loss: 3.0119
+Step 45 Loss: 3.1279
+Step 46 Loss: 3.1274
+Step 47 Loss: 3.3375
+Step 48 Loss: 3.5945
+Step 49 Loss: 2.8478
+Step 50 Loss: 2.9134
+Step 51 Loss: 2.912
+Step 52 Loss: 3.2636
+Step 53 Loss: 3.2439
+Step 54 Loss: 2.7509
+--------------------------------------------------
+Epoch (2/5)
+--------------------------------------------------
+Step 1 Loss: 2.571
+Step 2 Loss: 3.3831
+Step 3 Loss: 3.1718
+Step 4 Loss: 3.6097
+Step 5 Loss: 3.2068
+Step 6 Loss: 3.0034
+Step 7 Loss: 3.0919
+Step 8 Loss: 2.8194
+Step 9 Loss: 2.9856
+Step 10 Loss: 3.1635
+Step 11 Loss: 2.7914
+Step 12 Loss: 2.8579
+Step 13 Loss: 3.2694
+Step 14 Loss: 3.6684
+Step 15 Loss: 3.0802
+Step 16 Loss: 3.2728
+Step 17 Loss: 2.9746
+Step 18 Loss: 3.3106
+Step 19 Loss: 2.8417
+Step 20 Loss: 3.2357
+Step 21 Loss: 2.9959
+Step 22 Loss: 3.1601
+Step 23 Loss: 3.5789
+Step 24 Loss: 2.3768
+Step 25 Loss: 3.1586
+Step 26 Loss: 3.1511
+Step 27 Loss: 3.2918
+Step 28 Loss: 2.9598
+Step 29 Loss: 3.4508
+Step 30 Loss: 3.044
+Step 31 Loss: 2.9281
+Step 32 Loss: 3.135
+Step 33 Loss: 2.9891
+Step 34 Loss: 3.2157
+Step 35 Loss: 3.0395
+Step 36 Loss: 2.7398
+Step 37 Loss: 3.3105
+Step 38 Loss: 2.9207
+Step 39 Loss: 2.9819
+Step 40 Loss: 3.521
+Step 41 Loss: 2.5279
+Step 42 Loss: 3.058
+Step 43 Loss: 3.1012
+Step 44 Loss: 3.0028
+Step 45 Loss: 3.4062
+Step 46 Loss: 2.7364
+Step 47 Loss: 3.2526
+Step 48 Loss: 3.3245
+Step 49 Loss: 3.5763
+Step 50 Loss: 3.0531
+Step 51 Loss: 2.7901
+Step 52 Loss: 3.2899
+Step 53 Loss: 3.2253
+Step 54 Loss: 3.0442
+--------------------------------------------------
+Epoch (3/5)
+--------------------------------------------------
+Step 1 Loss: 3.0402
+Step 2 Loss: 2.9583
+Step 3 Loss: 2.8694
+Step 4 Loss: 2.7829
+Step 5 Loss: 3.3751
+Step 6 Loss: 3.1828
+Step 7 Loss: 3.0387
+Step 8 Loss: 3.3476
+Step 9 Loss: 2.8349
+Step 10 Loss: 3.1329
+Step 11 Loss: 3.4443
+Step 12 Loss: 2.9289
+Step 13 Loss: 3.0917
+Step 14 Loss: 3.3294
+Step 15 Loss: 2.9827
+Step 16 Loss: 3.161
+Step 17 Loss: 2.6865
+Step 18 Loss: 2.8794
+Step 19 Loss: 3.1157
+Step 20 Loss: 3.0504
+Step 21 Loss: 3.3294
+Step 22 Loss: 3.2686
+Step 23 Loss: 2.7126
+Step 24 Loss: 3.1766
+Step 25 Loss: 2.9467
+Step 26 Loss: 3.2697
+Step 27 Loss: 3.0809
+Step 28 Loss: 3.1966
+Step 29 Loss: 3.2491
+Step 30 Loss: 3.0278
+Step 31 Loss: 3.0155
+Step 32 Loss: 3.1318
+Step 33 Loss: 2.7912
+Step 34 Loss: 2.9735
+Step 35 Loss: 3.1049
+Step 36 Loss: 3.0861
+Step 37 Loss: 2.5575
+Step 38 Loss: 2.7422
+Step 39 Loss: 3.2963
+Step 40 Loss: 3.3457
+Step 41 Loss: 3.1728
+Step 42 Loss: 2.7013
+Step 43 Loss: 3.573
+Step 44 Loss: 3.5345
+Step 45 Loss: 3.2301
+Step 46 Loss: 3.3835
+Step 47 Loss: 3.3338
+Step 48 Loss: 2.683
+Step 49 Loss: 2.9407
+Step 50 Loss: 3.3939
+Step 51 Loss: 3.0697
+Step 52 Loss: 2.7894
+Step 53 Loss: 3.0267
+Step 54 Loss: 3.2879
+--------------------------------------------------
+Epoch (4/5)
+--------------------------------------------------
+Step 1 Loss: 3.3027
+Step 2 Loss: 3.2771
+Step 3 Loss: 3.0079
+Step 4 Loss: 2.8998
+Step 5 Loss: 3.6108
+Step 6 Loss: 2.8698
+Step 7 Loss: 3.1995
+Step 8 Loss: 3.0527
+Step 9 Loss: 3.0774
+Step 10 Loss: 2.9903
+Step 11 Loss: 3.4943
+Step 12 Loss: 3.4336
+Step 13 Loss: 3.1243
+Step 14 Loss: 3.2654
+Step 15 Loss: 3.0753
+Step 16 Loss: 3.5481
+Step 17 Loss: 2.8328
+Step 18 Loss: 2.9604
+Step 19 Loss: 3.1742
+Step 20 Loss: 3.1275
+Step 21 Loss: 3.0124
+Step 22 Loss: 3.1681
+Step 23 Loss: 3.1671
+Step 24 Loss: 3.3508
+Step 25 Loss: 3.2964
+Step 26 Loss: 3.1667
+Step 27 Loss: 3.268
+Step 28 Loss: 3.3226
+Step 29 Loss: 3.3625
+Step 30 Loss: 3.3416
+Step 31 Loss: 3.2815
+Step 32 Loss: 3.4467
+Step 33 Loss: 3.0439
+Step 34 Loss: 3.2639
+Step 35 Loss: 2.9607
+Step 36 Loss: 3.4001
+Step 37 Loss: 2.9737
+Step 38 Loss: 3.5578
+Step 39 Loss: 3.1144
+Step 40 Loss: 3.1623
+Step 41 Loss: 3.3559
+Step 42 Loss: 3.1328
+Step 43 Loss: 3.5279
+Step 44 Loss: 3.0415
+Step 45 Loss: 3.1816
+Step 46 Loss: 2.732
+Step 47 Loss: 2.9592
+Step 48 Loss: 3.4002
+Step 49 Loss: 3.3884
+Step 50 Loss: 3.209
+Step 51 Loss: 3.1842
+Step 52 Loss: 2.9642
+Step 53 Loss: 3.5183
+Step 54 Loss: 2.7482
+--------------------------------------------------
+Epoch (5/5)
+--------------------------------------------------
+Step 1 Loss: 2.6961
+Step 2 Loss: 2.9041
+Step 3 Loss: 2.6877
+Step 4 Loss: 2.9052
+Step 5 Loss: 3.7572
+Step 6 Loss: 2.4908
+Step 7 Loss: 3.5434
+Step 8 Loss: 2.9537
+Step 9 Loss: 3.2579
+Step 10 Loss: 3.234
+Step 11 Loss: 3.2249
+Step 12 Loss: 3.4045
+Step 13 Loss: 3.0331
+Step 14 Loss: 3.2892
+Step 15 Loss: 3.3409
+Step 16 Loss: 3.0804
+Step 17 Loss: 3.0528
+Step 18 Loss: 3.1684
+Step 19 Loss: 3.1146
+Step 20 Loss: 2.8608
+Step 21 Loss: 3.4329
+Step 22 Loss: 3.4623
+Step 23 Loss: 3.0456
+Step 24 Loss: 3.281
+Step 25 Loss: 3.3149
+Step 26 Loss: 2.9974
+Step 27 Loss: 2.8135
+Step 28 Loss: 3.2789
+Step 29 Loss: 3.1354
+Step 30 Loss: 3.2705
+Step 31 Loss: 2.8725
+Step 32 Loss: 3.2831
+Step 33 Loss: 3.1755
+Step 34 Loss: 3.2422
+Step 35 Loss: 3.3856
+Step 36 Loss: 3.6228
+Step 37 Loss: 3.3229
+Step 38 Loss: 2.7033
+Step 39 Loss: 3.3461
+Step 40 Loss: 3.4492
+Step 41 Loss: 3.2451
+Step 42 Loss: 2.5431
+Step 43 Loss: 3.0574
+Step 44 Loss: 3.5554
+Step 45 Loss: 3.433
+Step 46 Loss: 2.9258
+Step 47 Loss: 3.0992
+Step 48 Loss: 3.6403
+Step 49 Loss: 2.6008
+Step 50 Loss: 3.2687
+Step 51 Loss: 3.3029
+Step 52 Loss: 3.6819
+Step 53 Loss: 3.0208
+Step 54 Loss: 3.5253
+
+
+

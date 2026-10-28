@@ -18,6 +18,14 @@ torch_vision = 'pytorch/vision:v0.10.0'
 vision_model = 'resnet18'
 vision_model_weights = 'ResNet18_Weights.DEFAULT'
 vision_hidden_size = 512
+vision_pretrained = True
+# rasterise footprints in metres rather than degrees (models trained before this rasterise in degrees)
+raster_metric = True
+# stage 2 (footprint <-> tags): include names in the tag text (models trained before this always did)
+stage2_names = True
+# include names in all the text the model reads, in training and when it is used later; set from the model when
+# it is loaded (models trained before this always read names)
+names_in_text = True
 inverse_variance_weights = False
 # info_max
 bs = 256

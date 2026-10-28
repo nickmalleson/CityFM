@@ -8,6 +8,8 @@ from transformers import BertTokenizer, DistilBertTokenizer, RobertaTokenizer
 from transformers import AdamW, get_linear_schedule_with_warmup
 from transformers import CLIPTextModel, CLIPTokenizer, CLIPVisionModel
 
+from torchvision.transforms import Normalize
+
 import config
 from utils.pre_processing import *
 
@@ -189,8 +191,12 @@ class SSModel(nn.Module):
         self.get_lm()
         self.emb_size = emb_size
 
-        resnet18 = torch.hub.load(config.torch_vision, config.vision_model)
-        self.cv = torch.nn.Sequential(*(list(resnet18.children())[:-1]))
+        resnet18 = torch.hub.load(config.torch_vision, config.vision_model, pretrained=config.vision_pretrained)
+        cv_layers = list(resnet18.children())[:-1]
+        if config.vision_pretrained:
+            cv_layers = [Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])] + cv_layers
+        self.cv = torch.nn.Sequential(*cv_layers)
+        self.raster_metric = config.raster_metric
 
         self.lm_hidden_size = config.lm_hidden_sizes[self.lm_name]
         self.vhs = config.vision_hidden_size

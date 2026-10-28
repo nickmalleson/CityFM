@@ -813,6 +813,42 @@ def polyline_features(polyline):
     return features
 
 
+def is_residential(entity):
+
+    tags = entity['tags']
+    keys = [k for k in osm_strings.use_tags if k in tags]
+    return keys == [osm_strings.building] and tags[osm_strings.building] in osm_strings.residential_buildings
+
+
+def residential_summaries():
+
+    summaries = {}
+    for _, word in osm_strings.residential_bins:
+        e_id = 'residential: ' + word
+        summaries[e_id] = {'type': 'summary', 'id': e_id, 'lat': 0, 'lon': 0, 'tags': {osm_strings.building: word}}
+
+    return summaries
+
+
+def collapse_residential(context, entities):
+
+    kept = []
+    n = 0
+    for e in context:
+        if e in entities and is_residential(entities[e]):
+            n += 1
+        else:
+            kept.append(e)
+
+    if n:
+        for limit, word in osm_strings.residential_bins:
+            if n <= limit:
+                kept.append('residential: ' + word)
+                break
+
+    return kept
+
+
 def filter_polygons(cd):
 
     return [k for k in cd.entities.keys() if cd.entities[k]["type"] == osm_strings.polygon and len(cd.entities[k]['points']) > 3]
@@ -843,12 +879,20 @@ def generate_geojson(city):
     save(geo_b_u, 'geo_buildings_' + str(city).lower() + '.json')
 
 
+def match_raster(model):
+
+    # set the settings that change how a model reads its inputs to the ones it was trained with
+    config.raster_metric = getattr(model, 'raster_metric', False)
+    config.names_in_text = getattr(model, 'names_in_text', True)
+    return model
+
+
 def read_model_im(city):
 
     if os.path.exists(city + "/Model/model_im.pkl"):
         with open(city + "/Model/model_im.pkl", 'rb') as f:
             model = pickle.load(f)
-            return model
+            return match_raster(model)
 
     else:
         no_model_im(city)
@@ -858,7 +902,7 @@ def read_model_r(city):
     if os.path.exists(city + "/Model/model_rast.pkl"):
         with open(city + "/Model/model_rast.pkl", 'rb') as f:
             model = pickle.load(f)
-            return model
+            return match_raster(model)
 
     else:
         no_model_im(city)
@@ -868,7 +912,7 @@ def read_model_rel(city):
     if os.path.exists(city + "/Model/model_rel.pkl"):
         with open(city + "/Model/model_rel.pkl", 'rb') as f:
             model = pickle.load(f)
-            return model
+            return match_raster(model)
 
     else:
         no_model_im(city)
@@ -878,7 +922,7 @@ def read_model(city):
     if os.path.exists(city + "/Model/model.pkl"):
         with open(city + "/Model/model.pkl", 'rb') as f:
             model = pickle.load(f)
-            return model
+            return match_raster(model)
 
     else:
         no_model_im(city)
@@ -949,6 +993,10 @@ def read_best_model_r(city):
 
 
 def poly_to_raster(polygon, rotation=True, expand_first=True):
+
+    if config.raster_metric and isinstance(polygon, Polygon):
+        # points are (lat, lon): shrink longitude so both axes are in the same distance units
+        polygon = affinity.scale(polygon, yfact=cos(radians(polygon.centroid.x)), origin='centroid')
 
     if rotation and isinstance(polygon, Polygon):
         rectangle = polygon.minimum_rotated_rectangle
