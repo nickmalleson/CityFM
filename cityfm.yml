@@ -1,0 +1,40 @@
+# Conda environment for CityFM and the Leeds notebooks.
+# Create with:  conda env create -f cityfm.yml
+# Then register the kernel:  conda run -n cityfm python -m ipykernel install --user --name cityfm
+#
+# Versions are only pinned where newer releases break something.
+name: cityfm
+channels:
+  - conda-forge
+dependencies:
+  - python=3.9
+  - pip
+  - pip:
+      # model and training
+      - torch==1.13.1
+      - torchvision==0.14.1           # needed to unpickle model.pkl
+      - torchmetrics==0.11.3
+      - transformers==4.26.1
+      - setuptools<70                 # torchmetrics 0.11.3 imports pkg_resources
+      # data and geometry
+      - numpy==1.23.1
+      - pandas==1.5.1
+      - scipy
+      - scikit-learn>=1.0,<1.4
+      - networkx==2.8.8
+      - osmnx==1.2.2
+      - shapely==1.8.5                # the code uses the Shapely 1.x API
+      - pyproj
+      - rasterio>=1.3.3,<1.4
+      - geopandas<1.0
+      - requests
+      - gdown                         # downloads the pre-trained models
+      # notebooks
+      - matplotlib==3.6.2
+      - matplotlib-inline==0.1.7      # 0.2.x needs matplotlib>=3.7
+      - umap-learn==0.5.7             # 0.5.8+ upgrades scikit-learn past the pin above
+      - jupyter
+      - ipykernel
+      - joblib
+      - folium
+      - contextily
