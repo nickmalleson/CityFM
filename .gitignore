@@ -7,14 +7,9 @@ log_file.txt
 cache/
 tmp_dwl
 
-# City data folders created by CityFM_preprocess.py are not committed
-# (only the three shipped with the original repo are tracked).
-/*/
-!/utils/
-!/Singapore/
-!/New York/
-!/Seattle/
-!/notebooks/
-!/docs/
+# City data folders created by CityFM_preprocess.py are not committed.
+# Add a line here for each new city.
+/Leeds*/
+
 # Published paper: keep a local copy only
 /docs/Balsebre*.pdf
