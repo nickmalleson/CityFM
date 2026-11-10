@@ -15,3 +15,6 @@ tmp_dwl
 !/New York/
 !/Seattle/
 !/notebooks/
+!/docs/
+# Published paper: keep a local copy only
+/docs/Balsebre*.pdf
