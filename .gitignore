@@ -6,6 +6,8 @@ __pycache__/
 log_file.txt
 cache/
 tmp_dwl
+**.ipynb_checkpoints/
+*.swp
 
 # City data folders created by CityFM_preprocess.py are not committed.
 # Add a line here for each new city.

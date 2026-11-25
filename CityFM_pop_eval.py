@@ -17,24 +17,21 @@ import json
 import os
 import random
 import time
-from math import log10
 
 import numpy as np
 import pandas as pd
 import torch
 from pyproj import Transformer
 from scipy.stats import spearmanr
-from shapely.geometry import Point, Polygon, box
+from shapely.geometry import Polygon, box
 from shapely.ops import transform
-from shapely.prepared import prep
 
 import config
-from utils import osm_strings
-from utils.models import PE
-from utils.pre_processing import read_model, poly_to_raster, norm_surface, is_residential, \
-    collapse_residential, residential_summaries
-from utils.training import Tokenizer, serialize_data
+from utils.pre_processing import read_model, residential_summaries
+from utils.training import Tokenizer
 from utils.spatial_cv import spatial_cv_predict, r2
+from utils.unit_features import members_in_polygons, polygon_ids, sample_polygons, hand_features, pos_features, \
+    text_features, visual_features, reads_collapsed
 
 parser = argparse.ArgumentParser(description='Population density evaluation')
 parser.add_argument("-c", type=str, required=True, help='City with Data/entities.json and Data/pop_density.json')
@@ -73,16 +70,6 @@ def cached(name, fn):
 oa_geoms = [transform(to_bng, Polygon(v['polygon'])) for v in pop_d.values()]
 
 
-def oa_members():
-    members = np.empty(len(oa_geoms), dtype=object)
-    for n, g in enumerate(oa_geoms):
-        x0, y0, x1, y1 = g.bounds
-        cand = np.where((ex >= x0) & (ex <= x1) & (ey >= y0) & (ey <= y1))[0]
-        pg = prep(g)
-        members[n] = [ids[j] for j in cand if pg.contains(Point(ex[j], ey[j]))]
-    return members
-
-
 def grid_units():
     # cells fully inside the Output Areas; population from each OA in proportion to the overlap
     s = hp.g
@@ -110,7 +97,7 @@ def grid_units():
     return out
 
 
-oa_m = cached('oa_members', oa_members)
+oa_m = cached('oa_members', lambda: members_in_polygons(oa_geoms, ids, ex, ey))
 grid = cached('grid' + str(hp.g), grid_units)
 
 units = {
@@ -130,85 +117,16 @@ for u in units:
     units[u] = units[u][units[u].members.map(len) > 0].reset_index(drop=True)
     print(u + ': ' + str(len(units[u])) + ' units, ' + str(units[u].group.nunique()) + ' CV groups')
 
+# one generator for all units, Output Areas first, so the samples stay as they were
 rng = random.Random(0)
-polygon_ids = [i for i in ids if entities[i]['type'] == osm_strings.polygon and len(entities[i]['points']) > 3]
-is_polygon = set(polygon_ids)
+is_polygon = polygon_ids(entities)
 for u in units.values():
-    u['sample'] = [rng.sample(p, min(hp.k, len(p))) for p in ([i for i in m if i in is_polygon] for m in u.members)]
+    u['sample'] = sample_polygons(u.members, is_polygon, hp.k, rng)
 
 
-# ---- features that need no model
-
-def hand_features(df):
-    rows = []
-    for m in df.members:
-        es = [entities[i] for i in m]
-        blds = [e for e in es if e['type'] == osm_strings.polygon and osm_strings.building in e['tags']]
-        res = [e for e in blds if is_residential(e)]
-        # cap each building at config.max_surface, as the model's own area input does (norm_surface);
-        # a few mis-mapped 'houses' cover several km²
-        foot = sum(min(e.get('area', 0), config.max_surface) for e in blds)
-        rows.append({'log entities': log10(1 + len(es)), 'log buildings': log10(1 + len(blds)),
-                     'log houses': log10(1 + len(res)), 'house share': len(res) / max(1, len(blds)),
-                     'log footprint m2': log10(1 + foot),
-                     'log mean footprint': log10(1 + foot / max(1, len(blds))),
-                     'apartments': sum(e['tags'].get(osm_strings.building) == 'apartments' for e in blds),
-                     'log POIs': log10(1 + sum(e['type'] == 'node' for e in es))})
-    out = pd.DataFrame(rows)
-    # a few huge or mis-tagged 'building' polygons exceed their unit, so cap the share at 1
-    out['footprint share'] = np.minimum(1, 10 ** out['log footprint m2'] / (df.area_km2.values * 1e6))
-    return out.values.astype(float)
-
-
-def pos_features(df):
-    lon, lat = to_wgs(df.x.values, df.y.values)
-    return np.stack([PE((la, lo), config.pe_size) for la, lo in zip(lat, lon)])
-
-
-# ---- model features (as precompute_embs_pop_d, with identical rows encoded once)
+# ---- model features (utils/unit_features.py, as precompute_embs_pop_d)
 
 summaries = residential_summaries()
-
-
-def text_features(lm, proj, tok, df, collapse):
-    out = []
-    with torch.no_grad():
-        for m in df.members:
-            ents = [summaries[i] if i in summaries else entities[i]
-                    for i in (collapse_residential(m, entities) if collapse else m)]
-            ids_ = np.array(serialize_data(ents, tok, add_zero=True))
-            rows, counts = np.unique(ids_, axis=0, return_counts=True)
-            rows = torch.tensor(rows)
-            h = lm(rows, attention_mask=(rows != 0).long())[0]
-            w = torch.tensor(counts / counts.sum(), dtype=h.dtype)[:, None, None]
-            out.append(proj((h * w).sum(0).mean(0)).numpy())
-    return np.stack(out)
-
-
-def visual_features(model, df, bs=128):
-    pids = sorted({i for s in df['sample'] for i in s})
-    emb = {}
-    with torch.no_grad():
-        for b in range(0, len(pids), bs):
-            batch, imgs, surf = [], [], []
-            for i in pids[b:b + bs]:
-                try:
-                    r = poly_to_raster(Polygon(entities[i]['points']))
-                except Exception:
-                    continue
-                if len(r):
-                    batch.append(i)
-                    imgs.append(r)
-                    surf.append([norm_surface(entities[i]['area'])])
-            if not batch:
-                continue
-            img = model.projection_img(model.cv(torch.tensor(np.array(imgs)).float()).flatten(1))
-            s = model.projection_s(torch.tensor(surf).float())
-            for i, v in zip(batch, ((img + s) / 2).numpy()):
-                emb[i] = v
-    zero = np.zeros(model.emb_size, dtype=np.float32)
-    return np.stack([np.mean([emb[i] for i in s if i in emb], 0) if any(i in emb for i in s) else zero
-                     for s in df['sample']])
 
 
 # ---- scoring
@@ -223,8 +141,8 @@ results = []
 feats = {}
 for u, df in units.items():
     tag = u.split()[0].lower()
-    f = {'hand': cached('hand_' + tag, lambda: hand_features(df)),
-         'pos': cached('pos_' + tag, lambda: pos_features(df)),
+    f = {'hand': cached('hand_' + tag, lambda: hand_features(df.members, df.area_km2.values, entities)),
+         'pos': cached('pos_' + tag, lambda: pos_features(df.x.values, df.y.values)),
          'log area': np.log10(df.area_km2.values.astype(float))[:, None]}
     feats[u] = f
     if u == 'Output Areas':
@@ -240,20 +158,25 @@ for u, df in units.items():
     tag = u.split()[0].lower()
     for collapse in [False, True]:
         name = 'bert_text' + ('_collapsed' if collapse else '') + '_' + tag
-        t = cached(name, lambda: text_features(bert, torch.nn.Identity(), tok, df, collapse))
+        # untuned BERT reads names, as it always has here (before this was explicit, it ran before
+        # read_model changed config.names_in_text)
+        t = cached(name, lambda: text_features(bert, torch.nn.Identity(), tok, df.members, entities, summaries,
+                                               collapse, names=True))
         label = 'untuned BERT text' + (' (houses collapsed)' if collapse else '')
         results.append((u, 'baseline', label, score(t, df)))
         results.append((u, 'baseline', label + ' + hand', score(np.hstack([t, feats[u]['hand']]), df)))
 
 for m in hp.m:
-    model = read_model(m).eval()  # also sets the raster mode the model was trained with
+    model = read_model(m).eval()  # also sets the raster mode and whether names are read, as the model was trained
+    names = config.names_in_text
     tok = Tokenizer(model.lm_name)
     # models trained on collapsed contexts read collapsed units
-    collapse = 'residential: few houses' in json.load(open(m + '/Data/entities.json', encoding='utf-8'))
+    collapse = reads_collapsed(m)
     for u, df in units.items():
         tag = u.split()[0].lower() + '_' + os.path.basename(m.rstrip('/'))
-        t = cached('text_' + tag, lambda: text_features(model.lm, model.projection_p, tok, df, collapse))
-        v = cached('visual_' + tag, lambda: visual_features(model, df))
+        t = cached('text_' + tag, lambda: text_features(model.lm, model.projection_p, tok, df.members, entities,
+                                                        summaries, collapse, names))
+        v = cached('visual_' + tag, lambda: visual_features(model, df['sample'], entities))
         f = feats[u]
         for label, X in [('text', t), ('visual', v), ('text + visual + position (shipped)', np.hstack([t, v, f['pos']])),
                          ('text + visual + hand', np.hstack([t, v, f['hand']]))]:

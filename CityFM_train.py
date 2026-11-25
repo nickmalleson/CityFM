@@ -19,11 +19,15 @@ parser.add_argument("--reset-image", action='store_true',
 parser.add_argument("--no-names", action='store_true',
                     help='Leave names out of all text, in training and when the model is used later')
 parser.add_argument("--no-names-stage2", action='store_true', help='Stage 2 only: leave names out of the tag text (as v4)')
+parser.add_argument("--hold-out-query", action='store_true',
+                    help='Stage 1 only: remove the query from its own context, and draw queries only from '
+                         'segments with at least two entries')
 
 hp = parser.parse_args()
 config.n_epochs = hp.e
 config.m_index = hp.m
 config.stage2_names = not hp.no_names_stage2
+config.hold_out_query = hp.hold_out_query
 filter_w()
 
 check_data_exists(hp.c)
@@ -44,6 +48,8 @@ if hp.reset_image:
     model.cv, model.projection_img, model.projection_s = fresh.cv, fresh.projection_img, fresh.projection_s
     del fresh
 
+if '1' in hp.s:
+    model.hold_out_query = config.hold_out_query
 if '2' in hp.s:
     model.stage2_names = config.stage2_names
 

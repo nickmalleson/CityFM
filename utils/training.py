@@ -291,13 +291,42 @@ def u_sampling(cd, poly_queries, idx, texts=None):
     return queries
 
 
+def stage1_segments(data, entities, hold_out):
+    # The road segments stage 1 draws its quizzes from. With the query held out, a segment needs at least two
+    # known entries, so that its context is not empty once the query has been removed.
+    if not hold_out:
+        return list(data)
+    return [k for k, s in data.items() if sum(c in entities for c in s['context']) >= 2]
+
+
+def stage1_sample(context, entities, hold_out):
+    # One stage-1 pair for a road segment: (query entities, context entities). An empty query list is read as
+    # "context: none". Originally the query is any context entry, or "context: none", and stays in the context.
+    # With hold_out, the query is one of the known entries and is removed from the context.
+    if hold_out:
+        known = [k for k in context if k in entities]
+        if len(known) < 2:
+            raise ValueError('holding the query out needs at least two known context entries')
+        r = random.randrange(len(known))
+        return [entities[known[r]]], [entities[k] for i, k in enumerate(known) if i != r]
+
+    query = []
+    if context:
+        r = random.randint(0, len(context))
+        if r < len(context) and context[r] in entities:
+            query = [entities[context[r]]]
+    return query, [entities[k] for k in context if k in entities]
+
+
 def train_SS_im(cd, model):
 
     print(config.sep_width * "-")
     print('Self-supervised Training')
     print('(Infomax)')
 
-    queries = np.array(list(cd.data.keys()))
+    queries = np.array(stage1_segments(cd.data, cd.entities, config.hold_out_query))
+    if config.hold_out_query:
+        print(f'Query held out of its context: {len(queries)} of {len(cd.data)} segments have at least two entries')
     # pd = load_poly_dictionary(cd.city)
     tok = Tokenizer(config.lm)
     opt = optim.Adam(params=model.parameters(), lr=config.lr)
@@ -337,22 +366,9 @@ def train_SS_im(cd, model):
             query_p = []
 
             for q in query:
-                context = cd.data[q]['context']
-                if not context:
-                    query_p.append(serialize_data([], tok))
-
-                else:
-                    r = random.randint(0, len(context))
-                    if r == len(context):
-                        query_p.append(serialize_data([], tok))
-
-                    else:
-                        if context[r] in cd.entities:
-                            query_p.append(serialize_data([cd.entities[context[r]]], tok))
-                        else:
-                            query_p.append(serialize_data([], tok))
-
-                ctx.append(serialize_data([cd.entities[k] for k in context if k in cd.entities], tok, add_zero=True))
+                q_ents, c_ents = stage1_sample(cd.data[q]['context'], cd.entities, config.hold_out_query)
+                query_p.append(serialize_data(q_ents, tok))
+                ctx.append(serialize_data(c_ents, tok, add_zero=True))
 
             p_line_embs, ctx_embs = model(query_p, ctx, task='info_max')
             loss += info_nce(p_line_embs, ctx_embs)

@@ -26,6 +26,9 @@ stage2_names = True
 # include names in all the text the model reads, in training and when it is used later; set from the model when
 # it is loaded (models trained before this always read names)
 names_in_text = True
+# stage 1 (POI <-> street): remove the query entity from its own context, draw queries only from segments with at
+# least two entries, and never use "context: none" as the query (models trained before this kept the query in)
+hold_out_query = False
 inverse_variance_weights = False
 # info_max
 bs = 256
